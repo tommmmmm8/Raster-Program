@@ -13,4 +13,8 @@ public interface Rasterizer {
 
     void rasterize(Line line);
 
+    Raster getRaster();
+
+    Color getDefaultColor();
+
 }
