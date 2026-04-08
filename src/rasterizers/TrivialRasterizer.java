@@ -1,7 +1,8 @@
 package rasterizers;
 
-import models.Line;
-import models.Point;
+import models.shapes.Line;
+import models.shapes.Style;
+import models.shapes.Point;
 import rasters.Raster;
 
 import java.awt.*;
@@ -10,11 +11,6 @@ public class TrivialRasterizer implements Rasterizer {
 
     private Color defaultColor = Color.RED;
     private Raster raster;
-    private boolean isCtrlPressed = false;
-
-    public void setCtrlPressed(boolean ctrlPressed) {
-        isCtrlPressed = ctrlPressed;
-    }
 
     public TrivialRasterizer(Color defaultColor, Raster raster) {
         this.defaultColor = defaultColor;
@@ -39,35 +35,35 @@ public class TrivialRasterizer implements Rasterizer {
             int endY = Math.max(line.getP1().getY(), line.getP2().getY());
 
             for (int y = startY; y <= endY; y++) {
-                raster.setPixel(x, y, defaultColor.hashCode());
+                raster.setPixel(x, y, defaultColor.getRGB());
             }
             return;
         }
 
         double slope = calculateSlope(line);
-        System.out.println("P1 Y: " + line.getP1().getY() + ", P2 Y: " + line.getP2().getY());
-        System.out.println("Slope: " + slope);
+//        System.out.println("P1 Y: " + line.getP1().getY() + ", P2 Y: " + line.getP2().getY());
+//        System.out.println("Slope: " + slope);
         double intercept = calculateIntercept(line.getP1(), slope);
 
         int increment = 1;
-        if (isCtrlPressed)
-            increment= 10;
+        if (line.getStyle() == Style.DOTTED)
+            increment = 7;
 
         if (Math.abs(slope) <= 1) {
             if (line.getP1().getX() > line.getP2().getX())
-                line = new Line(line.getP2(), line.getP1());
+                line = new Line(line.getP2(), line.getP1(), line.getColor(),line.getStyle(), line.getWidth());
 
             for (int x = line.getP1().getX(); x < line.getP2().getX(); x += increment) {
                 int y = (int) (slope * x + intercept);
-                raster.setPixel(x, y, defaultColor.hashCode());
+                raster.setPixel(x, y, defaultColor.getRGB());
             }
         } else {
             if (line.getP1().getY() > line.getP2().getY())
-                line = new Line(line.getP2(), line.getP1());
+                line = new Line(line.getP2(), line.getP1(), line.getColor(), line.getStyle(), line.getWidth());
 
             for (int y = line.getP1().getY(); y < line.getP2().getY(); y += increment) {
                 int x = (int) ((y - intercept) / slope);
-                raster.setPixel(x, y, defaultColor.hashCode());
+                raster.setPixel(x, y, defaultColor.getRGB());
             }
         }
     }
@@ -78,5 +74,13 @@ public class TrivialRasterizer implements Rasterizer {
 
     private double calculateIntercept(Point p, double slope) {
         return p.getY() - slope * p.getX();
+    }
+
+    public Color getDefaultColor() {
+        return defaultColor;
+    }
+
+    public Raster getRaster() {
+        return raster;
     }
 }
