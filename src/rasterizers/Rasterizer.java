@@ -1,6 +1,6 @@
 package rasterizers;
 
-import models.Line;
+import models.shapes.Line;
 import rasters.Raster;
 
 import java.awt.*;

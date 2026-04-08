@@ -1,9 +1,11 @@
 package rasters;
 
-import models.Point;
+import models.shapes.Point;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+
+import static utils.BoundsChecker.isInBounds;
 
 public class RasterBufferedImage implements Raster {
 
@@ -33,7 +35,7 @@ public class RasterBufferedImage implements Raster {
 
     @Override
     public void setPixel(int x, int y, int color) {
-        if (!isInBounds(new Point(x, y)))
+        if (!isInBounds(img, new Point(x, y)))
             return;
         img.setRGB(x, y, color);
     }
@@ -58,10 +60,5 @@ public class RasterBufferedImage implements Raster {
     @Override
     public int getHeight() {
         return img.getHeight();
-    }
-
-    private boolean isInBounds(Point point) {
-        return point.getX() >= 0 && point.getY() >= 0 &&
-                point.getX() < img.getWidth() && point.getY() < img.getHeight();
     }
 }
