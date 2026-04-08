@@ -1,0 +1,17 @@
+TODO:
+- Polygon line styles don't work propertly
+   - also dotted style is applied to line after the dotted line eventhough ctrl wasn't pressed
+- Implement line width for Polygon (works only in preview)
+
+DONE:
+- Implement dashed style for circle
+- Implement fill method
+- Implement line width for a line (Line, Square, Rectangle)
+- Implement line width for Circle
+
+
+LOW PRIORITY:
+- Implement pretty looking circle thickness
+- Polygon line colors aren't implemented (exceptions are thrown because of it)
+
+
