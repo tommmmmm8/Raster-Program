@@ -1,4 +1,4 @@
-package models;
+package models.shapes;
 
 import rasterizers.Rasterizer;
 
