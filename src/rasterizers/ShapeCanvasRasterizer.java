@@ -1,7 +1,6 @@
 package rasterizers;
 
-import models.Line;
-import models.Shape;
+import models.shapes.Shape;
 import models.ShapeCanvas;
 
 public class ShapeCanvasRasterizer {
