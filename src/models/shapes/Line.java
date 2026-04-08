@@ -1,23 +1,21 @@
-package models;
+package models.shapes;
 
 import rasterizers.Rasterizer;
 import rasters.Raster;
 
 import java.awt.*;
 
-public class Line implements Shape {
-
+public class Line extends BaseShape {
     private Point p1, p2;
-    private final boolean isDotted;
 
-    public Line(Point p1, Point p2, boolean isDotted) {
+    public Line(Point p1, Point p2, Color color, Style style, int width) {
+        super(color, style, width);
         this.p1 = p1;
         this.p2 = p2;
-        this.isDotted = isDotted;
     }
 
-    public Line(Point p1, Point p2) {
-        this(p1, p2, false);
+    public Line(Point p1, Point p2, Color color) {
+        this(p1, p2, color, Style.NORMAL, 1);
     }
 
     public Point getP1() {
@@ -28,27 +26,31 @@ public class Line implements Shape {
         return p2;
     }
 
-    public boolean isDotted() {
-        return isDotted;
-    }
-
     @Override
     public void draw(Rasterizer rasterizer) {
-
-        Color defaultColor = rasterizer.getDefaultColor();
+        prepareRasterizer(rasterizer);
         Raster raster = rasterizer.getRaster();
 
         int increment = 1;
-        if (isDotted)
+        if (style == Style.DOTTED)
             increment = 7;
+
+        int pixelCount = 0;
 
         if (p1.getX() == p2.getX()) { // Vertical line
             int x = p1.getX();
             int startY = Math.min(p1.getY(), p2.getY());
             int endY = Math.max(p1.getY(), p2.getY());
+            int startX = x - (width - 1) / 2;
+            int endX = x + width / 2;
 
             for (int y = startY; y <= endY; y += increment) {
-                raster.setPixel(x, y, defaultColor.getRGB());
+                if (style != Style.DASHED || pixelCount % 20 < 10) {
+                    for (int currX = startX; currX <= endX; currX++) { // Width loop
+                        raster.setPixel(currX, y, color.getRGB());
+                    }
+                }
+                pixelCount++;
             }
             return;
         }
@@ -65,7 +67,15 @@ public class Line implements Shape {
 
             for (int x = p1.getX(); x < p2.getX(); x += increment) {
                 int y = (int) (slope * x + intercept);
-                raster.setPixel(x, y, defaultColor.getRGB());
+                if (style != Style.DASHED || pixelCount % 20 < 10) {
+                    int startY = y - (width - 1) / 2;
+                    int endY = y + width / 2;
+
+                    for (int currY = startY; currY <= endY; currY++) {
+                        raster.setPixel(x, currY, color.getRGB());
+                    }
+                }
+                pixelCount++;
             }
         } else {
             if (p1.getY() > p2.getY()) {
@@ -76,7 +86,15 @@ public class Line implements Shape {
 
             for (int y = p1.getY(); y < p2.getY(); y += increment) {
                 int x = (int) ((y - intercept) / slope);
-                raster.setPixel(x, y, defaultColor.getRGB());
+                if (style != Style.DASHED || pixelCount % 20 < 10) {
+                    int startX = x - (width - 1) / 2;
+                    int endX = x + width / 2;
+
+                    for (int currX = startX; currX <= endX; currX++) {
+                        raster.setPixel(currX, y, color.getRGB());
+                    }
+                }
+                pixelCount++;
             }
         }
     }
